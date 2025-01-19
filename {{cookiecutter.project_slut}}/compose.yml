@@ -1,0 +1,20 @@
+services:
+  {{ cookiecutter.project_slut }}:
+    container_name: {{ cookiecutter.project_slut }}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+        USER_NAME: ${USER_NAME}
+        {% for arg in cookiecutter.docker_args %}
+        {{ arg }} : ${ {{ arg }} }
+        {% endfor %}
+        DOTFILES_GITHUB: ${DOTFILES_GITHUB}
+        DOTFILES_BRANCH: ${DOTFILES_BRANCH}
+    stdin_open: true
+    tty: true
+    volumes:
+      - ${PWD}/:/home/${USER_NAME}/project
+      - ${HOME}/.ssh/:/home/${USER_NAME}/.ssh:ro

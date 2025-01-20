@@ -12,13 +12,13 @@ default_context:
     project_slut: devenv
     dependencies:
         array: [
-            git, chezmoi, openssh, neovim, tmux, starship, zoxide, fzf
+            base-devel, git, chezmoi, openssh, neovim, tmux, starship, zoxide, fzf
         ]
     docker_args:
         array: [DOTFILES_REPO, DOTFILES_BRANCH]
     extra_docker:
         array:
-            - RUN chezmoi init --apply --depth=1 --branch=\${DOTFILES_BRANCH} \${DOTFILES_GITHUB}
+            - RUN chezmoi init --apply --depth=1 --branch=\${DOTFILES_BRANCH} \${DOTFILES_REPO}
 
 EOF
 cookiecutter \

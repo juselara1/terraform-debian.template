@@ -3,8 +3,7 @@ FROM archlinux:latest
 ARG USER_ID
 ARG GROUP_ID
 ARG USER_NAME
-{% for arg in cookiecutter.docker_args["array"] %}
-ARG {{ arg }}
+{% for arg in cookiecutter.docker_args["array"] %}ARG {{ arg }}
 {% endfor %}
 
 RUN pacman --noconfirm -Syu
@@ -23,6 +22,5 @@ RUN groupadd -g ${GROUP_ID} ${USER_NAME} \
 
 USER ${USER_NAME}
 WORKDIR /home/${USER_NAME}/project
-{% for command in cookiecutter.extra_docker["array"] %}
-{{ command }}
+{% for command in cookiecutter.extra_docker["array"] %}{{ command }}
 {% endfor %}

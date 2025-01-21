@@ -8,10 +8,16 @@ services:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
         USER_NAME: ${USER_NAME}
-        {% for arg in cookiecutter.docker_args["array"] %}{{ arg }} : {{'${'}}{{ arg }}{{'}'}}
-        {% endfor %}
+        {% for arg in cookiecutter.docker_args["array"] -%}
+        {{ arg }} : {{'${'}}{{ arg }}{{'}'}}
+        {% endfor -%}
     stdin_open: true
     tty: true
     volumes:
       - ${PWD}/:/home/${USER_NAME}/project
       - ${HOME}/.ssh/:/home/${USER_NAME}/.ssh:ro
+    {% if cookiecutter.env_vars["array"] | length != 0 -%}
+    environment:
+      {% for env in cookiecutter.env_vars["array"] -%}
+      - {{ env }}: {{'${'}}{{ env }}{{'}'}}
+      {% endfor -%}{%- endif -%}

@@ -20,6 +20,8 @@ default_context:
         ]
     docker_args:
         array: [DOTFILES_REPO, DOTFILES_BRANCH]
+    env_vars:
+        array: [VAR1]
     extra_docker:
         array:
             - RUN chezmoi init --apply --depth=1 --branch=\${DOTFILES_BRANCH} \${DOTFILES_REPO}

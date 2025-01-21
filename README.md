@@ -14,6 +14,10 @@ default_context:
         array: [
             base-devel, git, chezmoi, openssh, neovim, tmux, starship, zoxide, fzf
         ]
+    dependencies_aur:
+        array: [
+            terraform-ls
+        ]
     docker_args:
         array: [DOTFILES_REPO, DOTFILES_BRANCH]
     extra_docker:

@@ -12,7 +12,7 @@ default_context:
     project_slut: devenv
     dependencies:
         array: [
-            base-devel, git, chezmoi, openssh, neovim, tmux, starship, zoxide, fzf
+            git, chezmoi, openssh, neovim, tmux, starship, zoxide, fzf
         ]
     dependencies_aur:
         array: [

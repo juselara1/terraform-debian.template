@@ -1,2 +1,21 @@
 # Environment variables
 *.env
+
+# Local .terraform directories
+**/.terraform/*
+*.lock.hcl
+
+# Terraform state
+*.tfstate
+*.tfstate.*
+
+# Log files
+crash.log
+crash.*.log
+
+# Terraform plan
+*tfplan*
+
+# Cli config
+.terraformrc
+terraform.rc

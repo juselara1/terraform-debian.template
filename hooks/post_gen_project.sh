@@ -4,9 +4,8 @@ cat > ".env" <<EOF
 export USER_ID=$(id -u ${USER})
 export GROUP_ID=$(id -g ${USER})
 export USER_NAME="${USER}"
-{% for arg in cookiecutter.docker_args["array"] -%}
-export {{ arg }}=""
-{% endfor -%}
+export DOTFILES_REPO=""
+export DOTFILES_BRANCH=""
 {%for env in cookiecutter.env_vars["array"] -%}
 export {{ env }}=""
 {% endfor -%}

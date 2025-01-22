@@ -1,21 +1,7 @@
 {
 	"project_name": "Base Project",
 	"project_slut": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
-	"dependencies": {
-		"array": ["git", "chezmoi", "openssh", "neovim", "tmux", "starship", "zoxide", "fzf"]
-	},
-	"dependencies_aur": {
-		"array": []
-	},
-	"docker_args": {
-		"array": ["DOTFILES_REPO", "DOTFILES_BRANCH"]
-	},
 	"env_vars": {
 		"array": []
-	},
-	"extra_docker": {
-		"array": [
-			"RUN chezmoi init --apply --depth=1 --branch=${DOTFILES_BRANCH} ${DOTFILES_REPO}"
-		]
 	}
 }

@@ -1,29 +1,47 @@
-FROM archlinux:base-devel
+# neovim builder
+FROM debian:bookworm-slim AS nvim_build
+RUN apt update -y && apt install -y --no-install-recommends \
+	git build-essential ca-certificates cmake ninja-build gettext curl
+RUN update-ca-certificates
+RUN git clone https://github.com/neovim/neovim.git /tmp/neovim --depth 1 --branch v0.10.3 \
+	&& cd /tmp/neovim \
+	&& make install
 
+# starship builder
+FROM debian:bookworm-slim AS fzf_build
+RUN apt update -y && apt install -y --no-install-recommends curl ca-certificates
+RUN update-ca-certificates
+RUN curl -sS https://starship.rs/install.sh > install.sh && chmod +x install.sh
+RUN ./install.sh --yes
+
+# zoxide builder
+FROM debian:bookworm-slim AS zoxide_build
+RUN apt update -y && apt install -y --no-install-recommends curl ca-certificates
+RUN update-ca-certificates
+RUN curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+
+# chezmoi builder
+FROM debian:bookworm-slim AS chezmoi_build
+RUN apt update -y && apt install -y --no-install-recommends curl ca-certificates
+RUN update-ca-certificates
+RUN sh -c "$(curl -fsLS get.chezmoi.io)"
+
+# main image
+FROM debian:bookworm-slim
 ARG USER_ID
 ARG GROUP_ID
 ARG USER_NAME
-{% for arg in cookiecutter.docker_args["array"] -%}
-ARG {{ arg }}
-{% endfor -%}
+ARG DOTFILES_REPO
+ARG DOTFILES_BRANCH
 
-RUN pacman --noconfirm -Syu
-{% if cookiecutter.dependencies["array"] | length != 0 -%}
-# Dependencies
-RUN pacman --noconfirm -S {% for dep in cookiecutter.dependencies["array"] %}{{ dep }} {% endfor %}
-{%- endif %}
+COPY --from=nvim_build /usr/local/bin/nvim /usr/local/bin/nvim
+COPY --from=nvim_build /usr/local/share/nvim /usr/local/share/nvim
+COPY --from=fzf_build /usr/local/bin/starship /usr/local/bin/starship
+COPY --from=zoxide_build /root/.local/bin/zoxide /usr/local/bin/zoxide
+COPY --from=chezmoi_build /bin/chezmoi /usr/local/bin/chezmoi
 
-{% if cookiecutter.dependencies_aur["array"] | length != 0 -%}
-# Configuration for AUR
-RUN pacman --sync --needed --noconfirm --noprogressbar sudo
-RUN pacman --noconfirm --needed -S git
-RUN useradd --system -s "/usr/bin/nologin" --create-home --home-dir "/home/aur_builder/" aur_builder 
-RUN passwd --lock "aur_builder"
-RUN echo "aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman" > "/etc/sudoers.d/allow_${AUR_USER}_to_pacman"
-RUN sudo -u "aur_builder" bash -c "git clone https://aur.archlinux.org/yay.git /home/aur_builder/yay"
-RUN sudo -u "aur_builder" bash -c "cd /home/aur_builder/yay && makepkg -si --noconfirm --needed"
-RUN sudo -u "aur_builder" bash -c "yay --noconfirm -S {% for dep in cookiecutter.dependencies_aur["array"] %}{{ dep }} {% endfor %}"
-{%- endif %}
+RUN apt update -y && apt install -y --no-install-recommends curl ca-certificates git
+RUN update-ca-certificates
 
 # Replicate the host user.
 RUN groupadd -g ${GROUP_ID} ${USER_NAME} \
@@ -31,9 +49,8 @@ RUN groupadd -g ${GROUP_ID} ${USER_NAME} \
 	&& install -d -m 0755 -o ${USER_NAME} -g ${USER_NAME} "/home/${USER_NAME}" \
 	&& chown --changes --silent --no-dereference --recursive --from=33:33 \
 		"${USER_ID}:${GROUP_ID}" "/home/${USER_NAME}"
-
 USER ${USER_NAME}
 WORKDIR /home/${USER_NAME}/project
-{% for command in cookiecutter.extra_docker["array"] -%}
-{{ command }}
-{% endfor -%}
+
+# Dotfiles setup
+RUN chezmoi init --apply --depth=1 --branch=${DOTFILES_BRANCH} ${DOTFILES_REPO}

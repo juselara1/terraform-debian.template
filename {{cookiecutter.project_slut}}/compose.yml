@@ -8,9 +8,8 @@ services:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
         USER_NAME: ${USER_NAME}
-        {% for arg in cookiecutter.docker_args["array"] -%}
-        {{ arg }} : {{'${'}}{{ arg }}{{'}'}}
-        {% endfor -%}
+        DOTFILES_REPO: ${DOTFILES_REPO}
+        DOTFILES_BRANCH: ${DOTFILES_BRANCH}
     stdin_open: true
     tty: true
     volumes:
@@ -20,4 +19,5 @@ services:
     environment:
       {% for env in cookiecutter.env_vars["array"] -%}
       - {{ env }}: {{'${'}}{{ env }}{{'}'}}
-      {% endfor -%}{%- endif -%}
+      {% endfor -%}
+    {%- endif -%}

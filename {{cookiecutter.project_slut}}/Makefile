@@ -12,3 +12,16 @@ build: ## Builds the development environment.
 connect: ## Connects to the development environment.
 	docker compose up -d
 	docker exec -it {{ cookiecutter.project_slut }} bash
+
+##@ Terraform
+init-state-%: ## Init the terraform state
+	pushd "envs/init_state" && ../utils.sh deploy_state `echo $@ | awk -F '-' '{print $$3}'` && popd
+
+plan-%: ## Create terraform plan
+	pushd "envs/$$(echo $@ | awk -F '-' '{print $$2}')" && ../utils.sh plan && popd
+
+show-%: ## Shows the terraform plan
+	pushd "envs/$$(echo $@ | awk -F '-' '{print $$2}')" && ../utils.sh show && popd
+
+deploy-%: ## Deploy terraform
+	pushd "envs/$$(echo $@ | awk -F '-' '{print $$2}')" && ../utils.sh deploy && popd

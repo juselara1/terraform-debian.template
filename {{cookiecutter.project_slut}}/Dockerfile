@@ -41,8 +41,15 @@ COPY --from=zoxide_build /root/.local/bin/zoxide /usr/local/bin/zoxide
 COPY --from=chezmoi_build /bin/chezmoi /usr/local/bin/chezmoi
 
 RUN apt update -y && apt install -y --no-install-recommends \
-	curl ca-certificates git tmux fzf openssh-client
+	curl ca-certificates git tmux fzf openssh-client wget gpg software-properties-common
 RUN update-ca-certificates
+
+# Install terraform
+RUN wget -O gpg_keys https://apt.releases.hashicorp.com/gpg \
+	&& gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg gpg_keys \
+	&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
+	> /etc/apt/sources.list.d/hashicorp.list
+RUN apt update && apt install terraform
 
 # Replicate the host user.
 RUN groupadd -g ${GROUP_ID} ${USER_NAME} \

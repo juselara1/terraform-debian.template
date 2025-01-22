@@ -1,7 +1,7 @@
 # Base Cookiecutter Template for Arch Linux
 ---
 
-This `cookiecutter` template creates an isolated and complete development environment in `docker` using `debian` as the base image, and shares the same host user and ssh keys.
+This `cookiecutter` template creates an isolated and complete development environment for terraform in `docker` using `debian` as the base image, and shares the same host user and ssh keys.
 
 Example usage:
 
@@ -18,5 +18,5 @@ EOF
 cookiecutter \
     --no-input \
     --config-file "/tmp/config.yml" \
-    "https://github.com/juselara1/base-debian.template"
+    "https://github.com/juselara1/terraform-debian.template"
 ```

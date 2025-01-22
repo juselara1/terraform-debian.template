@@ -12,7 +12,8 @@ default_context:
     project_slut: devenv
     nvim_version: v0.10.3
     debian_version: bookworm-slim
-    env_vars: []
+    env_vars: 
+        array: []
 EOF
 cookiecutter \
     --no-input \

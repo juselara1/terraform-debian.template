@@ -1,7 +1,7 @@
 # Base Cookiecutter Template for Arch Linux
 ---
 
-This `cookiecutter` template creates an isolated and complete development environment in `docker` using `arch-linux` as the base image, and shares the same host user and ssh keys.
+This `cookiecutter` template creates an isolated and complete development environment in `docker` using `debian` as the base image, and shares the same host user and ssh keys.
 
 Example usage:
 
@@ -10,12 +10,12 @@ cat > "/tmp/config.yml" <<EOF
 default_context:
     project_name: Development environment
     project_slut: devenv
-    env_vars:
-        array: []
-
+    nvim_version: v0.10.3
+    debian_version: bookworm-slim
+    env_vars: []
 EOF
 cookiecutter \
     --no-input \
     --config-file "/tmp/config.yml" \
-    "https://github.com/juselara1/base-arch.template"
+    "https://github.com/juselara1/base-debian.template"
 ```

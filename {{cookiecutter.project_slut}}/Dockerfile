@@ -1,33 +1,33 @@
 # neovim builder
-FROM debian:bookworm-slim AS nvim_build
+FROM debian:{{ cookiecutter.debian_version }} AS nvim_build
 RUN apt update -y && apt install -y --no-install-recommends \
 	git build-essential ca-certificates cmake ninja-build gettext curl
 RUN update-ca-certificates
-RUN git clone https://github.com/neovim/neovim.git /tmp/neovim --depth 1 --branch v0.10.3 \
+RUN git clone https://github.com/neovim/neovim.git /tmp/neovim --depth 1 --branch {{ cookiecutter.nvim_version }} \
 	&& cd /tmp/neovim \
 	&& make install
 
 # starship builder
-FROM debian:bookworm-slim AS fzf_build
+FROM debian:{{ cookiecutter.debian_version }} AS fzf_build
 RUN apt update -y && apt install -y --no-install-recommends curl ca-certificates
 RUN update-ca-certificates
 RUN curl -sS https://starship.rs/install.sh > install.sh && chmod +x install.sh
 RUN ./install.sh --yes
 
 # zoxide builder
-FROM debian:bookworm-slim AS zoxide_build
+FROM debian:{{ cookiecutter.debian_version }} AS zoxide_build
 RUN apt update -y && apt install -y --no-install-recommends curl ca-certificates
 RUN update-ca-certificates
 RUN curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 
 # chezmoi builder
-FROM debian:bookworm-slim AS chezmoi_build
+FROM debian:{{ cookiecutter.debian_version }} AS chezmoi_build
 RUN apt update -y && apt install -y --no-install-recommends curl ca-certificates
 RUN update-ca-certificates
 RUN sh -c "$(curl -fsLS get.chezmoi.io)"
 
 # main image
-FROM debian:bookworm-slim
+FROM debian:{{ cookiecutter.debian_version }}
 ARG USER_ID
 ARG GROUP_ID
 ARG USER_NAME

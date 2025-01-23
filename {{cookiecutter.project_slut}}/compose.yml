@@ -1,8 +1,8 @@
 services:
-  {{ cookiecutter.project_slut }}:
-    container_name: {{ cookiecutter.project_slut }}
+  {{ cookiecutter.project_slut }}-devenv:
+    container_name: {{ cookiecutter.project_slut }}-devenv
     build:
-      context: .
+      context: .devenv/
       dockerfile: Dockerfile
       args:
         USER_ID: ${USER_ID:-0}
